@@ -1,0 +1,1 @@
+require 'cloud_encrypted_sync_s3_adapter/adapter'
