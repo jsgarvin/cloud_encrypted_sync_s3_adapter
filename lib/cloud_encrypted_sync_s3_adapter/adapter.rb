@@ -9,7 +9,7 @@ module CloudEncryptedSync
 
         def parse_command_line_options(opts)
           opts.on('--bucket BUCKETNAME', 'Name of S3 bucket to use.') do |bucket_name|
-            command_line_options[:bucket_name] = bucket_name
+            command_line_options[:bucket] = bucket_name
           end
           opts.on('--s3-credentials ACCESS_KEY_ID,SECRET_ACCESS_KEY', Array, "Credentials for your S3 account." ) do| credentials|
             @command_line_options[:s3_credentials] = credentials
@@ -37,7 +37,7 @@ module CloudEncryptedSync
         #######
 
         def credentials
-          command_line_options[:s3_credentials]
+          config[:s3_credentials]
         end
 
         def connection
@@ -45,7 +45,7 @@ module CloudEncryptedSync
         end
 
         def bucket_name
-          command_line_options[:bucket_name].to_sym
+          config[:bucket].to_sym
         end
 
         def bucket
