@@ -7,6 +7,7 @@ require 'etc'
 
 SimpleCov.start
 
+require 'cloud_encrypted_sync'
 require 'cloud_encrypted_sync_s3_adapter'
 
 module CloudEncryptedSyncS3Adapter

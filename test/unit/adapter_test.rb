@@ -8,7 +8,7 @@ module CloudEncryptedSyncS3Adapter
         @config = YAML.load_file(CloudEncryptedSync::Master.send(:config_file_path))
       end
       @test_bucket_name = "cloud_encrypted_sync_unit_test_bucket_#{Digest::SHA1.hexdigest(rand.to_s)}"
-      adapter.instance_variable_set(:@command_line_options, {:bucket_name => @test_bucket_name, :s3_credentials => @config['s3_credentials']})
+      CloudEncryptedSync::Master.instance_variable_set(:@command_line_options, CloudEncryptedSync::Master.instance_variable_get(:@command_line_options).merge({:bucket => @test_bucket_name, :s3_credentials => @config['s3_credentials']}))
       create_test_bucket
     end
 
