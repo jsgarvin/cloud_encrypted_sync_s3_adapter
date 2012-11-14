@@ -37,7 +37,7 @@ module CloudEncryptedSync
         #######
 
         def credentials
-          Master.config[:s3_credentials]
+          Configuration.settings[:s3_credentials]
         end
 
         def connection
@@ -45,7 +45,7 @@ module CloudEncryptedSync
         end
 
         def bucket_name
-          Master.config[:bucket].to_sym
+          Configuration.settings[:bucket].to_sym
         end
 
         def bucket
