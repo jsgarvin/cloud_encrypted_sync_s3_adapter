@@ -4,11 +4,18 @@ module CloudEncryptedSyncS3Adapter
   class AdapterTest < ActiveSupport::TestCase
 
     def setup
-      if File.exist?(CloudEncryptedSync::Master.send(:config_file_path))
-        @config = YAML.load_file(CloudEncryptedSync::Master.send(:config_file_path))
+      if File.exist?(CloudEncryptedSync::Configuration.send(:config_file_path))
+        @config = YAML.load_file(CloudEncryptedSync::Configuration.send(:config_file_path))
       end
-      @test_bucket_name = "cloud_encrypted_sync_unit_test_bucket_#{Digest::SHA1.hexdigest(rand.to_s)}"
-      CloudEncryptedSync::Master.instance_variable_set(:@command_line_options, CloudEncryptedSync::Master.instance_variable_get(:@command_line_options).merge({:bucket => @test_bucket_name, :s3_credentials => @config['s3_credentials']}))
+      CloudEncryptedSync::Configuration.stubs(:settings).returns(
+        {
+          :excryption_key => 'abc',
+          :adapter => 's3',
+          :bucket => test_bucket_name,
+          :sync_path => '/non/existent/path',
+          :s3_credentials => @config['s3_credentials']
+        }
+      )
       create_test_bucket
     end
 
@@ -34,6 +41,9 @@ module CloudEncryptedSyncS3Adapter
 
     end
 
+    test 'should raise NoSuchKey error' do
+      assert_raises(CloudEncryptedSync::Errors::NoSuchKey) { adapter.read('nonexistentkey') }
+    end
 
     #######
     private
@@ -44,11 +54,16 @@ module CloudEncryptedSyncS3Adapter
     end
 
     def create_test_bucket
-      adapter.send(:connection).buckets.create(@test_bucket_name)
+      adapter.send(:connection).buckets.create(test_bucket_name)
     end
 
     def delete_test_bucket
       adapter.send(:bucket).delete! unless credentials == [] or !credentials.is_a?(Array)
     end
+
+    def test_bucket_name
+      @test_bucket_name ||= "cloud_encrypted_sync_unit_test_bucket_#{Digest::SHA1.hexdigest(rand.to_s)}"
+    end
+
   end
 end

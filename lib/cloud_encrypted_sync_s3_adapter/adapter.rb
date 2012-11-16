@@ -21,7 +21,11 @@ module CloudEncryptedSync
         end
 
         def read(key)
-          bucket.objects[key].read
+          begin
+            bucket.objects[key].read
+          rescue AWS::S3::Errors::NoSuchKey => exception
+            raise CloudEncryptedSync::Errors::NoSuchKey.new(exception.message)
+          end
         end
 
         def delete(key)

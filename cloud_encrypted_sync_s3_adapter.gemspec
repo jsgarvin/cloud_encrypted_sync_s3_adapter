@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.description = %q{Plugin adapter for CloudEncryptedSync gem that provides interface to AmazonS3.}
 
   s.add_dependency('aws-sdk', '~> 1.4.1')
-  s.add_dependency('cloud_encrypted_sync', '~> 0.1.0')
+  s.add_dependency('cloud_encrypted_sync', '~> 0.1.1')
 
   s.add_development_dependency('rake')
   s.add_development_dependency('mocha')

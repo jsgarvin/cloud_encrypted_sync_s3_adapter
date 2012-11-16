@@ -1,14 +1,14 @@
 PATH
   remote: .
   specs:
-    cloud_encrypted_sync_s3_adapter (0.0.1)
+    cloud_encrypted_sync_s3_adapter (0.1.1)
       aws-sdk (~> 1.4.1)
-      cloud_encrypted_sync (~> 0.0.1)
+      cloud_encrypted_sync (~> 0.1.1)
 
 PATH
   remote: ~/workspace/cloud_encrypted_sync
   specs:
-    cloud_encrypted_sync (0.0.1)
+    cloud_encrypted_sync (0.1.1)
 
 GEM
   remote: http://rubygems.org/
