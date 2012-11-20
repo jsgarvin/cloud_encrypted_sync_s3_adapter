@@ -19,6 +19,17 @@ module CloudEncryptedSyncS3Adapter
       create_test_bucket
     end
 
+    test 'should parse command line options' do
+      Object.send(:remove_const,:ARGV)
+      ::ARGV = '--bucket foobar --s3-credentials KEY_ID,ACCESS_KEY'.split(/\s/)
+      @command_line_options = {}
+      @option_parser = OptionParser.new do |opts|
+        @command_line_options = adapter.parse_command_line_options(opts,@command_line_options)
+      end
+      @option_parser.parse!
+      assert_equal({:bucket => 'foobar', :s3_credentials => ['KEY_ID','ACCESS_KEY']},@command_line_options)
+    end
+
     test 'should write readable data to s3 and then delete it' do
 
       skip 'S3 credentials for test bucket not provided.' unless credentials.is_a?(Array) and credentials != []

@@ -7,10 +7,10 @@ module CloudEncryptedSync
       class << self
 
         def parse_command_line_options(opts,command_line_options)
-          opts.on('--bucket=BUCKETNAME', 'Name of S3 bucket to use.') do |bucket_name|
+          opts.on('--bucket BUCKETNAME', 'Name of S3 bucket to use.') do |bucket_name|
             command_line_options[:bucket] = bucket_name
           end
-          opts.on('--s3-credentials=ACCESS_KEY_ID,SECRET_ACCESS_KEY', Array, "Credentials for your S3 account." ) do| credentials|
+          opts.on('--s3-credentials ACCESS_KEY_ID,SECRET_ACCESS_KEY', Array, "Credentials for your S3 account." ) do| credentials|
             command_line_options[:s3_credentials] = credentials
           end
           return command_line_options
