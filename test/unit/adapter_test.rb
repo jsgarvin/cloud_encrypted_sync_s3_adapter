@@ -19,6 +19,10 @@ module CloudEncryptedSyncS3Adapter
       create_test_bucket
     end
 
+    def teardown
+      delete_test_bucket
+    end
+
     test 'should parse command line options' do
       Object.send(:remove_const,:ARGV)
       ::ARGV = '--bucket foobar --s3-credentials KEY_ID,ACCESS_KEY'.split(/\s/)
