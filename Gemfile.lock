@@ -5,11 +5,6 @@ PATH
       aws-sdk (~> 1.7.1)
       cloud_encrypted_sync (~> 0.1.1)
 
-PATH
-  remote: ~/workspace/cloud_encrypted_sync
-  specs:
-    cloud_encrypted_sync (0.1.2)
-
 GEM
   remote: http://rubygems.org/
   specs:
@@ -21,6 +16,7 @@ GEM
       json (~> 1.4)
       nokogiri (>= 1.4.4)
       uuidtools (~> 2.1)
+    cloud_encrypted_sync (0.1.1)
     httparty (0.9.0)
       multi_json (~> 1.0)
       multi_xml
@@ -44,7 +40,6 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport
-  cloud_encrypted_sync!
   cloud_encrypted_sync_s3_adapter!
   mocha
   rake
