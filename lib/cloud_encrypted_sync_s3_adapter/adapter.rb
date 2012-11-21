@@ -3,14 +3,17 @@ require 'aws-sdk'
 module CloudEncryptedSync
   module Adapters
     class S3 < Template
-      attr_accessor :bucket_name, :credentials
+      attr_writer :bucket_name, :access_key, :access_key_id
 
       def parse_command_line_options(parser)
         parser.on('--bucket BUCKETNAME', 'Name of S3 bucket to use.') do |bucket_argument|
-          self.bucket_name = bucket_argument.to_sym
+          self.bucket_name = bucket_argument
         end
-        parser.on('--s3-credentials ACCESS_KEY_ID,SECRET_ACCESS_KEY', Array, "Credentials for your S3 account." ) do |credentials_argument|
-          self.credentials = credentials_argument
+        parser.on('--access-key KEY', 'Access Key for S3 login.') do |bucket_argument|
+          self.access_key = bucket_argument
+        end
+        parser.on('--access-key-id KEYID', 'Access Key ID for S3 login.') do |bucket_argument|
+          self.access_key_id = bucket_argument
         end
       end
 
@@ -38,8 +41,20 @@ module CloudEncryptedSync
       private
       #######
 
+      def bucket_name
+        @bucket_name || Configuration.settings['s3-bucket']
+      end
+
+      def access_key
+        @access_key || Configuration.settings['s3-access-key']
+      end
+
+      def access_key_id
+        @access_key_id || Configuration.settings['s3-access-key-id']
+      end
+
       def connection
-        @connection ||= AWS::S3.new(:access_key_id => credentials[0], :secret_access_key => credentials[1])
+        @connection ||= AWS::S3.new(:access_key_id => access_key_id, :secret_access_key => access_key)
       end
 
       def bucket
