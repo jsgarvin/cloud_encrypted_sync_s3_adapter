@@ -7,15 +7,7 @@ module CloudEncryptedSyncS3Adapter
       if File.exist?(CloudEncryptedSync::Configuration.send(:config_file_path))
         @config = YAML.load_file(CloudEncryptedSync::Configuration.send(:config_file_path))
       end
-      CloudEncryptedSync::Configuration.stubs(:settings).returns(
-        {
-          :excryption_key => 'abc',
-          :adapter => 's3',
-          :bucket => test_bucket_name,
-          :sync_path => '/non/existent/path',
-          :s3_credentials => @config['s3_credentials']
-        }
-      )
+      stub_configuration
       create_test_bucket
     end
 
@@ -24,14 +16,17 @@ module CloudEncryptedSyncS3Adapter
     end
 
     test 'should parse command line options' do
+      unstub_configuration
       Object.send(:remove_const,:ARGV)
       ::ARGV = '--bucket foobar --s3-credentials KEY_ID,ACCESS_KEY'.split(/\s/)
       @command_line_options = {}
-      @option_parser = OptionParser.new do |opts|
-        @command_line_options = adapter.parse_command_line_options(opts,@command_line_options)
+      @option_parser = OptionParser.new do |parser|
+        adapter.parse_command_line_options(parser)
       end
       @option_parser.parse!
-      assert_equal({:bucket => 'foobar', :s3_credentials => ['KEY_ID','ACCESS_KEY']},@command_line_options)
+      assert_equal(:foobar,CloudEncryptedSync::Adapters::S3.instance.bucket_name)
+      assert_equal(['KEY_ID','ACCESS_KEY'],CloudEncryptedSync::Adapters::S3.instance.credentials)
+      stub_configuration
     end
 
     test 'should write readable data to s3 and then delete it' do
@@ -80,5 +75,24 @@ module CloudEncryptedSyncS3Adapter
       @test_bucket_name ||= "cloud_encrypted_sync_unit_test_bucket_#{Digest::SHA1.hexdigest(rand.to_s)}"
     end
 
+    def stub_configuration
+      CloudEncryptedSync::Configuration.stubs(:settings).returns(
+        {
+          :excryption_key => 'abc',
+          :adapter => 's3',
+          :bucket => test_bucket_name,
+          :sync_path => '/non/existent/path',
+          :s3_credentials => @config['s3_credentials']
+        }
+      )
+      CloudEncryptedSync::Adapters::S3.any_instance.stubs(:bucket_name).returns(test_bucket_name)
+      CloudEncryptedSync::Adapters::S3.any_instance.stubs(:credentials).returns(@config['s3_credentials'])
+    end
+
+    def unstub_configuration
+      CloudEncryptedSync::Configuration.unstub(:settings)
+      CloudEncryptedSync::Adapters::S3.any_instance.unstub(:bucket_name)
+      CloudEncryptedSync::Adapters::S3.any_instance.unstub(:credentials)
+    end
   end
 end

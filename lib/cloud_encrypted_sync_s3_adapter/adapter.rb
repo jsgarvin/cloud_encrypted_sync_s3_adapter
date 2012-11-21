@@ -3,15 +3,15 @@ require 'aws-sdk'
 module CloudEncryptedSync
   module Adapters
     class S3 < Template
+      attr_accessor :bucket_name, :credentials
 
-      def parse_command_line_options(opts,command_line_options)
-        opts.on('--bucket BUCKETNAME', 'Name of S3 bucket to use.') do |bucket_name|
-          command_line_options[:bucket] = bucket_name
+      def parse_command_line_options(parser)
+        parser.on('--bucket BUCKETNAME', 'Name of S3 bucket to use.') do |bucket_argument|
+          self.bucket_name = bucket_argument.to_sym
         end
-        opts.on('--s3-credentials ACCESS_KEY_ID,SECRET_ACCESS_KEY', Array, "Credentials for your S3 account." ) do| credentials|
-          command_line_options[:s3_credentials] = credentials
+        parser.on('--s3-credentials ACCESS_KEY_ID,SECRET_ACCESS_KEY', Array, "Credentials for your S3 account." ) do |credentials_argument|
+          self.credentials = credentials_argument
         end
-        return command_line_options
       end
 
       def write(data, key)
@@ -38,16 +38,8 @@ module CloudEncryptedSync
       private
       #######
 
-      def credentials
-        Configuration.settings[:s3_credentials]
-      end
-
       def connection
         @connection ||= AWS::S3.new(:access_key_id => credentials[0], :secret_access_key => credentials[1])
-      end
-
-      def bucket_name
-        Configuration.settings[:bucket].to_sym
       end
 
       def bucket
