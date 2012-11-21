@@ -42,14 +42,14 @@ module CloudEncryptedSyncS3Adapter
       test_key = 'testkey'
 
       assert !adapter.key_exists?(test_key)
-      assert_difference('adapter.send(:bucket).objects.count') do
+      assert_difference('adapter.instance.send(:bucket).objects.count') do
         adapter.write(test_data,test_key)
       end
       assert adapter.key_exists?(test_key)
 
       assert_equal(test_data,adapter.read(test_key))
 
-      assert_difference('adapter.send(:bucket).objects.count',-1) do
+      assert_difference('adapter.instance.send(:bucket).objects.count',-1) do
         adapter.delete(test_key)
       end
       assert !adapter.key_exists?(test_key)
@@ -69,11 +69,11 @@ module CloudEncryptedSyncS3Adapter
     end
 
     def create_test_bucket
-      adapter.send(:connection).buckets.create(test_bucket_name)
+      adapter.instance.send(:connection).buckets.create(test_bucket_name)
     end
 
     def delete_test_bucket
-      adapter.send(:bucket).delete! unless credentials == [] or !credentials.is_a?(Array)
+      adapter.instance.send(:bucket).delete! unless credentials == [] or !credentials.is_a?(Array)
     end
 
     def test_bucket_name
