@@ -19,4 +19,4 @@ module CloudEncryptedSyncS3Adapter
 
   end
 end
-require 'mocha'
+require 'mocha/mini_test'
